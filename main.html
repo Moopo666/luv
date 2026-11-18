@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>มีอะไรจะบอก... 💖</title>
+    <!-- นำเข้า Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- นำเข้าฟอนต์ Mali และ Kanit จาก Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Mali:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ตั้งค่าฟอนต์หลักเป็น Mali เพื่อความน่ารัก */
+        body {
+            font-family: 'Mali', 'Kanit', sans-serif;
+            overflow: hidden; /* ป้องกันการเลื่อนหน้าจอเวลาปุ่มวิ่งหนี */
+            touch-action: manipulation; /* ป้องกันการซูมเวลาแตะรัวๆ บนมือถือ */
+            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 50%, #ffb3c1 100%);
+        }
+
+        /* อนิเมชันหัวใจลอยขึ้น */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.5) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.5) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .floating-heart {
+            position: fixed;
+            bottom: -50px;
+            pointer-events: none;
+            z-index: 50;
+            animation: floatUp linear forwards;
+        }
+
+        /* อนิเมชันเด้งดึ๋งสำหรับตัวการ์ตูน */
+        @keyframes bounceSlow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .animate-bounce-slow {
+            animation: bounceSlow 2.5s infinite ease-in-out;
+        }
+
+        /* เอฟเฟกต์กระจกฝ้า (Glassmorphism) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 40px rgba(255, 77, 109, 0.15);
+        }
+
+        /* ปรับแต่งการเปลี่ยนผ่านของปุ่มให้ลื่นไหล */
+        #yesBtn {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        #noBtn {
+            transition: left 0.25s ease-out, top 0.25s ease-out, transform 0.2s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex items-center justify-center p-4 relative select-none">
+
+    <!-- พื้นหลังหัวใจจางๆ ตกแต่ง -->
+    <div id="bgHearts" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
+
+    <!-- กล่องข้อความหลัก (หน้าคำถาม) -->
+    <main id="questionCard" class="glass-card rounded-3xl p-6 sm:p-8 w-full max-w-sm text-center relative z-10 transition-all duration-500">
+        
+        <!-- ตัวการ์ตูน SVG น่ารักๆ (น้องหมีถือหัวใจ) -->
+        <div class="w-36 h-36 mx-auto mb-4 animate-bounce-slow flex items-center justify-center">
+            <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
+                <!-- หูหมี -->
+                <circle cx="55" cy="55" r="24" fill="#d4a373"/>
+                <circle cx="55" cy="55" r="14" fill="#faedcd"/>
+                <circle cx="145" cy="55" r="24" fill="#d4a373"/>
+                <circle cx="145" cy="55" r="14" fill="#faedcd"/>
+                <!-- หัวหมี -->
+                <ellipse cx="100" cy="105" rx="65" ry="58" fill="#d4a373"/>
+                <!-- แก้มแดง -->
+                <ellipse cx="62" cy="115" rx="12" ry="7" fill="#ff758f" opacity="0.6"/>
+                <ellipse cx="138" cy="115" rx="12" ry="7" fill="#ff758f" opacity="0.6"/>
+                <!-- ตา -->
+                <circle cx="75" cy="95" r="7" fill="#3d2c2e"/>
+                <circle cx="77" cy="93" r="2.5" fill="#ffffff"/>
+                <circle cx="125" cy="95" r="7" fill="#3d2c2e"/>
+                <circle cx="127" cy="93" r="2.5" fill="#ffffff"/>
+                <!-- จมูกและปาก -->
+                <ellipse cx="100" cy="112" rx="18" ry="14" fill="#faedcd"/>
+                <ellipse cx="100" cy="107" rx="7" ry="5" fill="#3d2c2e"/>
+                <path d="M 92 117 Q 100 124 108 117" stroke="#3d2c2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <!-- หัวใจดวงใหญ่ตรงกลาง -->
+                <path d="M100 175 C100 175 55 145 55 120 C55 105 70 98 85 108 C93 113 100 122 100 122 C100 122 107 113 115 108 C130 98 145 105 145 120 C145 145 100 175 100 175 Z" fill="#ff4d6d" class="animate-pulse"/>
+            </svg>
+        </div>
+
+        <!-- หัวข้อคำถาม -->
+        <h1 id="mainTitle" class="text-2xl sm:text-3xl font-bold text-rose-600 mb-2 leading-snug">
+            เป็นแฟนกันนะ? 🥺💕
+        </h1>
+        
+        <!-- ข้อความอ้อน (จะเปลี่ยนไปเรื่อยๆ เมื่อกดปฏิเสธ) -->
+        <p id="subText" class="text-rose-500 text-sm sm:text-base mb-8 min-h-[48px] flex items-center justify-center font-medium">
+            เค้าแอบชอบเธอมานานแล้วนะ ตกลงเป็นแฟนกับเค้านะครับ/คะ 💖
+        </p>
+
+        <!-- พื้นที่ปุ่มกด -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 relative min-h-[110px]">
+            <!-- ปุ่มตกลง -->
+            <button id="yesBtn" class="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-8 rounded-full shadow-lg shadow-rose-300 active:scale-95 z-20 text-lg">
+                ตกลง 🥰
+            </button>
+
+            <!-- ปุ่มไม่ตกลง (จะย้ายตำแหน่งไปทั่วจอเมื่อถูกแตะหรือชี้) -->
+            <button id="noBtn" class="bg-white text-rose-400 border-2 border-rose-200 font-semibold py-3 px-6 rounded-full shadow-md active:scale-90 z-30 text-base">
+                ไม่ตกลง 😝
+            </button>
+        </div>
+    </main>
+
+    <!-- หน้าจอแสดงผลเมื่อกด "ตกลง" (ซ่อนไว้ตอนเริ่มต้น) -->
+    <section id="successCard" class="hidden glass-card rounded-3xl p-6 sm:p-8 w-full max-w-sm text-center relative z-20 transform scale-90 opacity-0 transition-all duration-500">
+        <!-- ไอคอนฉลอง -->
+        <div class="text-6xl mb-4 animate-bounce">
+            🥳💖💑
+        </div>
+        
+        <h2 class="text-2xl sm:text-3xl font-bold text-rose-600 mb-3">
+            เย้! เป็นแฟนกันแล้วนะ! 🎉
+        </h2>
+        
+        <div class="bg-rose-50/80 rounded-2xl p-4 mb-6 border border-rose-100">
+            <p class="text-rose-700 text-base sm:text-lg leading-relaxed font-medium">
+                "สัญญาว่าจะดูแลเธอให้ดีที่สุดเลย จะไม่ทำให้เสียใจ และจะรักเธอมากขึ้นทุกๆ วันเลยนะ 💕"
+            </p>
+        </div>
+
+        <p class="text-xs text-rose-400 mb-6">
+            แคปหน้าจอนี้ส่งมาให้เค้าด้วยนะ! 📸✨
+        </p>
+
+        <!-- ปุ่มเล่นอีกครั้ง / ส่งหัวใจเพิ่ม -->
+        <div class="flex gap-3 justify-center">
+            <button id="moreHeartsBtn" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white font-semibold py-2.5 px-5 rounded-full shadow-md active:scale-95 transition text-sm">
+                สาดหัวใจรัวๆ 💖
+            </button>
+            <button id="resetBtn" class="bg-white text-rose-500 border border-rose-200 font-semibold py-2.5 px-4 rounded-full shadow-sm active:scale-95 transition text-sm">
+                เล่นอีกรอบ 🔄
+            </button>
+        </div>
+    </section>
+
+    <script>
+        // อ้างอิง Element ต่างๆ ในหน้าเว็บ
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const mainTitle = document.getElementById('mainTitle');
+        const subText = document.getElementById('subText');
+        const questionCard = document.getElementById('questionCard');
+        const successCard = document.getElementById('successCard');
+        const moreHeartsBtn = document.getElementById('moreHeartsBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // ตัวแปรเก็บสถานะ
+        let rejectCount = 0;
+        let yesScale = 1;
+
+        // รายการข้อความอ้อนที่จะเปลี่ยนไปเรื่อยๆ เมื่อพยายามกดปุ่ม "ไม่ตกลง"
+        const pleadingMessages = [
+            "แน่ใจเหรอ? คิดดูดีๆ น้าา 🥺",
+            "ปุ่มนั้นมันเสีย กดปุ่มสีชมพูดีกว่านะ! 👉💖",
+            "ใจร้ายจังเลย ให้โอกาสเค้าหน่อยนะ 😭",
+            "ถ้าไม่ตกลง เค้าจะร้องไห้แล้วนะ แงงง 😿",
+            "กดตกลงเถอะนะ เดี๋ยวเลี้ยงชาไข่มุกเลย! 🧋✨",
+            "หนีไม่พ้นหรอก ยังไงก็ต้องเป็นแฟนเค้า 😝💕",
+            "ปุ่มตกลงใหญ่ขนาดนี้แล้ว กดเถอะนะคนดี 🥰"
+        ];
+
+        const noBtnTexts = [
+            "ไม่ตกลง 😝",
+            "ไม่เอาอะ 🙈",
+            "กดไม่โดนหรอก 💨",
+            "แบร่ๆ 😜",
+            "ยอมแพ้เถอะ 💖",
+            "ทางนี้ๆ 👉",
+            "ม่ายยยย 🏃‍♂️"
+        ];
+
+        /**
+         * ฟังก์ชันสุ่มย้ายตำแหน่งปุ่ม "ไม่ตกลง" ให้อยู่ภายในขอบเขตหน้าจอมือถือ
+         */
+        function moveNoButton(e) {
+            // ป้องกันพฤติกรรมเริ่มต้นของ Touch event (เช่น การเลื่อนหรือคลิกซ้ำซ้อน)
+            if (e && e.type === 'touchstart') {
+                e.preventDefault();
+            }
+
+            rejectCount++;
+
+            // 1. เปลี่ยนข้อความอ้อนและข้อความบนปุ่ม
+            const msgIndex = Math.min(rejectCount - 1, pleadingMessages.length - 1);
+            subText.textContent = pleadingMessages[msgIndex];
+            noBtn.textContent = noBtnTexts[rejectCount % noBtnTexts.length];
+
+            // 2. ขยายขนาดปุ่ม "ตกลง" ให้ใหญ่ขึ้นเรื่อยๆ
+            yesScale += 0.22;
+            // จำกัดขนาดสูงสุดไม่ให้ล้นจอจนบังทุกอย่างมิดเกินไป
+            const cappedScale = Math.min(yesScale, 2.8);
+            yesBtn.style.transform = `scale(${cappedScale})`;
+
+            // 3. คำนวณพื้นที่ปลอดภัยบนหน้าจอ (ไม่ให้ปุ่มตกขอบจอ)
+            const padding = 20;
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+            
+            const maxX = window.innerWidth - btnWidth - padding;
+            const maxY = window.innerHeight - btnHeight - padding;
+
+            // สุ่มพิกัด X และ Y ใหม่
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+
+            // เปลี่ยน position เป็น fixed เพื่อให้อิสระในการวิ่งหนีทั่วหน้าจอ
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${randomX}px`;
+            noBtn.style.top = `${randomY}px`;
+            
+            // เพิ่มลูกเล่นเอียงปุ่มเล็กน้อยให้ดูดุ๊กดิ๊ก
+            const randomRotate = (Math.random() - 0.5) * 30;
+            noBtn.style.transform = `rotate(${randomRotate}deg)`;
+        }
+
+        // รองรับทั้งการแตะบนมือถือ (touchstart), การเอาเมาส์ชี้ (mouseover) และการคลิก (click)
+        noBtn.addEventListener('touchstart', moveNoButton, { passive: false });
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('click', moveNoButton);
+
+        /**
+         * ฟังก์ชันสร้างเอฟเฟกต์หัวใจลอยฟรุ้งฟริ้ง
+         */
+        function createHeart() {
+            const heart = document.createElement('div');
+            const emojis = ['❤️', '💖', '💕', '💗', '💓', '💘', '🥰', '🌸'];
+            heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            heart.className = 'floating-heart';
+
+            // สุ่มตำแหน่งแนวนอน ขนาด และความเร็วในการลอย
+            const startLeft = Math.random() * 100;
+            const size = Math.random() * 24 + 16; // 16px - 40px
+            const duration = Math.random() * 2 + 2.5; // 2.5s - 4.5s
+
+            heart.style.left = `${startLeft}vw`;
+            heart.style.fontSize = `${size}px`;
+            heart.style.animationDuration = `${duration}s`;
+
+            document.body.appendChild(heart);
+
+            // ลบ element ทิ้งเมื่ออนิเมชันจบเพื่อไม่ให้กินทรัพยากรเครื่อง
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+
+        /**
+         * ฟังก์ชันปล่อยหัวใจชุดใหญ่
+         */
+        function burstHearts(count = 30) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(createHeart, i * 80);
+            }
+        }
+
+        /**
+         * เมื่อกดปุ่ม "ตกลง"
+         */
+        yesBtn.addEventListener('click', () => {
+            // ซ่อนปุ่มไม่ตกลง (เผื่อมันลอยอยู่บนจอ)
+            noBtn.style.display = 'none';
+
+            // ซ่อนการ์ดคำถาม
+            questionCard.style.opacity = '0';
+            questionCard.style.transform = 'scale(0.8)';
+
+            setTimeout(() => {
+                questionCard.classList.add('hidden');
+                
+                // แสดงการ์ดสำเร็จ
+                successCard.classList.remove('hidden');
+                // บังคับ Reflow เพื่อให้ transition ทำงาน
+                void successCard.offsetWidth;
+                
+                successCard.style.opacity = '1';
+                successCard.style.transform = 'scale(1)';
+
+                // ปล่อยเอฟเฟกต์หัวใจฉลอง
+                burstHearts(45);
+            }, 300);
+        });
+
+        // ปุ่มสาดหัวใจเพิ่ม
+        moreHeartsBtn.addEventListener('click', () => {
+            burstHearts(25);
+        });
+
+        // ปุ่มรีเซ็ตเพื่อเล่นใหม่
+        resetBtn.addEventListener('click', () => {
+            rejectCount = 0;
+            yesScale = 1;
+            
+            // คืนค่าปุ่มตกลง
+            yesBtn.style.transform = 'scale(1)';
+            
+            // คืนค่าปุ่มไม่ตกลงกลับเข้าที่เดิม
+            noBtn.style.display = 'inline-block';
+            noBtn.style.position = 'static';
+            noBtn.style.transform = 'none';
+            noBtn.textContent = "ไม่ตกลง 😝";
+            
+            // คืนค่าข้อความ
+            subText.textContent = "เค้าแอบชอบเธอมานานแล้วนะ ตกลงเป็นแฟนกับเค้านะครับ/คะ 💖";
+
+            // สลับหน้าจอกลับ
+            successCard.style.opacity = '0';
+            successCard.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                successCard.classList.add('hidden');
+                questionCard.classList.remove('hidden');
+                void questionCard.offsetWidth;
+                questionCard.style.opacity = '1';
+                questionCard.style.transform = 'scale(1)';
+            }, 300);
+        });
+
+        // สร้างหัวใจลอยจางๆ เป็นพื้นหลังตลอดเวลา
+        setInterval(() => {
+            if (document.hidden) return; // ประหยัดแบตเมื่อพับหน้าจอ
+            createHeart();
+        }, 1200);
+    </script>
+</body>
+</html>
